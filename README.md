@@ -1,8 +1,6 @@
 # SalonOS
 
-Salon management portal specification and agent delivery baseline.
-
-Current status: product documentation plus an initial in-memory booking reference and automated domain tests. This is not a working web portal. Persistent storage, authentication, checkout and deployment are not implemented. Grok chat participation has not yet been acknowledged.
+Salon management portal specification plus a persistent, tenant-safe scheduling command layer. This is not a production web portal. Checkout, payments, and a staff UI are out of scope for SAL-002.
 
 ## Product documents
 
@@ -14,11 +12,34 @@ Current status: product documentation plus an initial in-memory booking referenc
 - [Starting requirements backlog](docs/SalonOS_Starting_Backlog.json)
 - [Joint build queue and Grok kickoff prompt](docs/delivery/COLLABORATION.md)
 - [Independent booking reference review](docs/validation/booking-reference-review.md)
+- [Architecture decision records](docs/architecture/ADRs.md)
+- [Migrations and forward recovery](docs/architecture/migrations-and-recovery.md)
+- [SAL-002 handoff](docs/delivery/handoffs/SAL-002.md)
 
-## Run the reference tests
+## What is implemented
 
-Requires Node.js 20 or later. Run `npm test` from the repository root; no dependencies or API keys are needed. The single-process model demonstrates behavior only. Replace it with transactional database constraints and authenticated server commands before production use.
+- In-memory `ReferenceScheduler` remains a behavioral fixture (`src/domain/booking.mjs`).
+- PostgreSQL 16 is the authoritative store for appointments, items, reservations, catalog snapshots, memberships and sessions.
+- Authenticated `/v1` JSON commands (`src/api/http.mjs`) resolve tenant membership from a session token. Request-supplied tenant ids are not trusted.
+- Staff skills, shifts, leave/breaks, buffers, idempotency, optimistic reschedule versions, expired-hold retirement and exclusion constraints are enforced in the scheduling transaction.
 
-Read the PRD for the full target, MVP for controlled-pilot boundaries, and TDD for proposed implementation contracts. The manual is unverified until tested against a build. The agent charter defines research, build, independent validation and founder-authorized release handoffs.
+Not implemented: responsive booking UI, cash checkout, live payments, production identity provider/MFA mail, recurring/group/parallel booking.
 
-Start with one synthetic-data vertical slice: configure a service and practitioner, create a conflict-safe appointment, complete treatment, check out, issue a receipt and reconcile daily close. Expand only after independent evidence verifies the slice.
+## Tests
+
+Requires Node.js 20 or later.
+
+Domain fixture tests (no database):
+
+```bash
+npm run test:domain
+```
+
+Full suite, including Postgres concurrency and tenant-isolation tests:
+
+1. Start PostgreSQL 16 (`docker compose up -d postgres` or `scripts/setup-local-postgres.sh`).
+2. Copy `.env.example` URLs into the environment. Docker users typically migrate as `postgres://postgres:postgres@127.0.0.1:5432/salonos_test`.
+3. `npm install` (or `npm ci`)
+4. `npm test`
+
+Synthetic passwords in tests and setup scripts are fixtures only.

@@ -1,32 +1,10 @@
 import { randomUUID } from 'node:crypto';
+import { BookingError, fail, clone, text, object, instant, overlaps, canonical, planAppointment } from './plan.mjs';
+
+export { BookingError };
 
 // Reference model only. Mutations have no await points and are atomic only within
 // this one process. PostgreSQL transactions/constraints must replace these maps.
-export class BookingError extends Error {
-  constructor(code, message) { super(message); this.code = code; }
-}
-const fail = (code, message) => { throw new BookingError(code, message); };
-const clone = value => structuredClone(value);
-const text = value => typeof value === 'string' && value.trim().length > 0;
-const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
-const instant = value => {
-  const parts = typeof value === 'string' && /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(Z|[+-](\d{2}):(\d{2}))$/.exec(value);
-  if (!parts) fail('INVALID', 'Timestamp must be an ISO date and include a timezone');
-  const [, yearText, monthText, dayText, hourText, minuteText, secondText, , offsetHour, offsetMinute] = parts;
-  const [year, month, day, hour, minute, second] = [yearText, monthText, dayText, hourText, minuteText, secondText].map(Number);
-  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  if (month < 1 || month > 12 || day < 1 || day > days[month - 1] || hour > 23 || minute > 59 || second > 59 ||
-      (offsetHour !== undefined && (Number(offsetHour) > 23 || Number(offsetMinute) > 59))) {
-    fail('INVALID', 'Invalid calendar date or time');
-  }
-  const result = Date.parse(value);
-  if (!Number.isFinite(result)) fail('INVALID', 'Invalid timestamp');
-  return result;
-};
-const overlaps = (a, b) => a.start < b.end && b.start < a.end;
-const canonical = value => JSON.stringify(value);
-
 export class ReferenceScheduler {
   #tenants = new Map();
   #appointments = new Map();
@@ -51,45 +29,7 @@ export class ReferenceScheduler {
   }
 
   #plan(tenantId, request) {
-    const tenant = this.#tenant(tenantId);
-    if (!object(request) || !text(request.clientId) || !Array.isArray(request.items) || request.items.length === 0) {
-      fail('INVALID', 'Client and service items required');
-    }
-    let cursor = instant(request.start);
-    const normalized = { clientId: request.clientId, start: new Date(cursor).toISOString(), items: [] };
-    const items = [];
-    const reservations = [];
-    for (const item of request.items) {
-      if (!object(item)) fail('INVALID', 'Invalid service item');
-      const service = tenant.services.find(value => value.id === item.serviceId);
-      const staff = tenant.staff.find(value => value.id === item.staffId);
-      if (!service || !staff || !staff.serviceIds.includes(service.id)) fail('INVALID', 'Service or qualified staff unavailable');
-      const duration = service.durationMinutes;
-      const buffer = service.bufferMinutes ?? 0;
-      if (!Number.isSafeInteger(duration) || duration <= 0 || !Number.isSafeInteger(buffer) || buffer < 0 ||
-          !Number.isSafeInteger(service.priceMinor) || service.priceMinor < 0) fail('INVALID', 'Invalid service configuration');
-      if (service.resourceRequired && !text(item.resourceId)) fail('INVALID', 'Service requires a resource');
-      const resourceId = item.resourceId ?? null;
-      const resource = resourceId === null ? null : tenant.resources.find(value => value.id === resourceId);
-      if (resourceId !== null && (!resource || !resource.serviceIds.includes(service.id))) fail('INVALID', 'Resource unavailable');
-      const start = cursor;
-      const serviceEnd = start + duration * 60000;
-      const end = serviceEnd + buffer * 60000;
-      if (!Number.isFinite(end)) fail('INVALID', 'Invalid appointment interval');
-      for (const entity of [staff, ...(resource ? [resource] : [])]) {
-        const available = entity.availability.some(range => instant(range.start) <= start && instant(range.end) >= end);
-        const blocked = (entity.blocked ?? []).some(range => overlaps({ start, end }, { start: instant(range.start), end: instant(range.end) }));
-        if (!available || blocked) fail('UNAVAILABLE', 'Outside availability or blocked time');
-      }
-      normalized.items.push({ serviceId: service.id, staffId: staff.id, resourceId });
-      items.push({ serviceId: service.id, staffId: staff.id, resourceId, start: new Date(start).toISOString(),
-        serviceEnd: new Date(serviceEnd).toISOString(), end: new Date(end).toISOString(),
-        durationMinutes: duration, bufferMinutes: buffer, priceMinor: service.priceMinor });
-      reservations.push({ kind: 'staff', entityId: staff.id, start, end });
-      if (resource) reservations.push({ kind: 'resource', entityId: resource.id, start, end });
-      cursor = end;
-    }
-    return { normalized, items, reservations };
+    return planAppointment(this.#tenant(tenantId), request);
   }
 
   #checkConflicts(tenantId, reservations, excludeId = null) {

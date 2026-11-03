@@ -1,9 +1,20 @@
 {
-  "name": "salonos-reference-foundation",
-  "version": "0.0.1",
+  "name": "salonos",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
-  "description": "In-memory booking reference only; no production persistence, identity or web application",
-  "scripts": { "test": "node --test" },
-  "engines": { "node": ">=20" }
+  "description": "SalonOS modular scheduling command layer with PostgreSQL persistence. Not a production web portal.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 --test-timeout=120000 test/*.test.mjs",
+    "test:domain": "node --test test/booking.test.mjs test/booking.review.test.mjs",
+    "test:db": "node --test --test-concurrency=1 --test-timeout=120000 test/persistent-scheduling.test.mjs test/identity-isolation.test.mjs test/concurrency.process.test.mjs test/api.http.test.mjs",
+    "migrate": "node scripts/migrate.mjs",
+    "expire-holds": "node scripts/expire-holds.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
 }
