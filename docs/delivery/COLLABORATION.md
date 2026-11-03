@@ -1,6 +1,6 @@
 # ChatGPT and Grok Joint Build Coordination
 
-Status: initial ChatGPT implementation and review in progress; Grok chat execution not yet acknowledged.
+Status: SAL-001 in-memory booking reference is on `build/joint-agent-booking-foundation` (PR #6). SAL-002 persistent scheduling is implemented on `build/sal-002-persistent-scheduling` as a draft PR against that foundation branch. Independent G6 QA has not accepted it.
 
 ## Shared work queue
 
@@ -46,4 +46,4 @@ Copy the following into a Grok chat. If that chat cannot open repository content
 
 The first reference implementation is a single-process in-memory scheduler, not a web app, authentication layer or persistent reservation system. It is a behavioral starting point for SAL-002; database concurrency tests remain required. QA evidence in docs/validation records only the checks actually performed.
 
-The next shared update is the Grok coordinator acknowledgement and its proposed patch/PR for SAL-002. Bring that response or PR link into ChatGPT for independent review. No recurring monitoring or scheduled task is configured.
+The next shared update is independent QA of the SAL-002 draft PR against `build/joint-agent-booking-foundation`. Do not merge to `main` from this slice. No recurring monitoring or scheduled task is configured.
