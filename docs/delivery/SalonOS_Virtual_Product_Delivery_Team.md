@@ -2,9 +2,11 @@
 
 Version 1.0 · 3 November 2026 · Status: ready-to-configure operating model and instruction pack
 
+Canonical copy in this repository. Ready-to-paste role instructions are also extracted under [`agent-prompts/`](../../agent-prompts/README.md). Previously published as `docs/SalonOS_Agent_Team_and_Grok_Handoff.md`.
+
 ## 1 Operating decision
 
-Use ChatGPT as the research and product documentation workbench, and Grok-based workers as the proposed implementation and deployment team. One delivery coordinator owns the queue, dependencies and handoffs. The founder owns business decisions and production release authorization. This package defines the team; no Grok bots, accounts, repositories, API integration or deployment have been created here.
+Use ChatGPT as the research and product documentation workbench, and Grok-based workers as the proposed implementation and deployment team. One delivery coordinator owns the queue, dependencies and handoffs. The founder owns business decisions and production release authorization. This package defines the team; no Grok bots, accounts, API integration or deployment have been created here.
 
 Current verified capability: xAI documents function calling, where a model requests a tool and a developer-controlled program executes it. That can support repository, test and deployment tools when a runner supplies them. A named chat persona alone does not have those permissions, persistent work queues or a deployment environment. Do not assume a consumer Grok bot, Grok's internal multi-agent research feature and an API coding worker are interchangeable.
 
@@ -55,18 +57,18 @@ A = one accountable owner; R = performs work; C = consulted; V = independent val
 
 ## 4 Shared source of truth
 
-Use one private Git repository, one issue board and one decision log. Do not use the last message in a bot chat as the authoritative specification. Until a repository is supplied, the files in this package are the baseline to transfer manually. No repository name or host is assumed.
+This repository is the shared source of truth. Use one issue board and one decision log. Do not use the last message in a bot chat as the authoritative specification.
 
-Proposed repository paths:
+Repository paths:
 
-- docs/product/SalonOS_PRD.md
-- docs/manual/SalonOS_Usage_Manual.md
-- docs/research/source-register.md
-- docs/architecture/ADRs.md and api-contracts/
-- docs/decisions/decision-log.md
-- docs/delivery/handoffs/ and release-manifests/
-- docs/validation/traceability.csv and releases/{release-id}/
-- agent-prompts/ with the role instructions in this pack
+- [docs/product/SalonOS_PRD.md](../product/SalonOS_PRD.md)
+- [docs/manual/SalonOS_Usage_Manual.md](../manual/SalonOS_Usage_Manual.md)
+- [docs/research/source-register.md](../research/source-register.md)
+- [docs/architecture/ADRs.md](../architecture/ADRs.md) and [api-contracts/](../architecture/api-contracts/README.md)
+- [docs/decisions/decision-log.md](../decisions/decision-log.md)
+- [docs/delivery/handoffs/](handoffs/README.md) and [release-manifests/](release-manifests/README.md)
+- [docs/validation/traceability.csv](../validation/traceability.csv) and [releases/](../validation/releases/README.md)
+- [agent-prompts/](../../agent-prompts/README.md) with the role instructions in this pack
 
 G0 records PRD version, manual version, schema version, task revision and commit SHA in each handoff. C3 labels every manual section Proposed, Verified in staging, or Verified in production. An interface change must update the contract and affected instructions in the same review cycle.
 

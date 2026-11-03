@@ -2,6 +2,8 @@
 
 Version 1.0 · 3 November 2026 · Status: proposed build baseline
 
+Related documents: [MVP](SalonOS_MVP.md) · [starting backlog](SalonOS_Starting_Backlog.json) · [usage manual](../manual/SalonOS_Usage_Manual.md) · [technical design](../architecture/SalonOS_TDD.md) · [operating model](../delivery/SalonOS_Virtual_Product_Delivery_Team.md)
+
 ## 1 Purpose and scope
 
 Build a responsive, production web application that lets a salon operate the complete customer journey: discover a service, book, arrive, receive treatment, pay, redeem benefits, receive communications, and return. Owners manage staff, stock, cash, liabilities and performance from the same system. This document is the implementation contract; the companion usage manual describes intended workflows and proposed navigation. No application, payment connection or production readiness is claimed by these documents.
