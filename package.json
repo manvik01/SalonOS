@@ -1,0 +1,9 @@
+{
+  "name": "salonos-reference-foundation",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "In-memory booking reference only; no production persistence, identity or web application",
+  "scripts": { "test": "node --test" },
+  "engines": { "node": ">=20" }
+}
