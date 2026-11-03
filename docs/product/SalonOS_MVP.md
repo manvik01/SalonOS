@@ -2,6 +2,8 @@
 
 Version 1.0 · 3 November 2026 · Proposed implementation baseline
 
+Related documents: [PRD](SalonOS_PRD.md) · [starting backlog](SalonOS_Starting_Backlog.json) · [technical design](../architecture/SalonOS_TDD.md) · [operating model](../delivery/SalonOS_Virtual_Product_Delivery_Team.md)
+
 ## Objective
 
 Deliver one reliable end-to-end salon workflow: owner setup → service and roster configuration → client booking → treatment → checkout → receipt → reconciled daily close. This document extracts the controlled pilot from PRD 1.0. It does not replace the full PRD or claim implementation is complete.

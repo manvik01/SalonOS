@@ -2,6 +2,8 @@
 
 Version 1.0 · 3 November 2026 · Status: proposed operating procedures
 
+Related documents: [PRD](../product/SalonOS_PRD.md) · [MVP](../product/SalonOS_MVP.md) · [operating model](../delivery/SalonOS_Virtual_Product_Delivery_Team.md)
+
 This manual describes the intended application defined in SalonOS PRD 1.0. Navigation names are proposed, and all procedures are currently UNVERIFIED AGAINST A BUILD. They become verified only after QA records the tested commit and evidence. R1 is a controlled pilot; R2 is the business launch; R3 features must remain hidden or clearly unavailable until delivered. Never train staff to rely on an unbuilt payment or messaging function.
 
 ## 1 Access and roles

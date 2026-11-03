@@ -2,6 +2,8 @@
 
 Version 1.0 · 3 November 2026 · Proposed architecture for PRD 1.0 and MVP 1.0
 
+Related documents: [PRD](../product/SalonOS_PRD.md) · [MVP](../product/SalonOS_MVP.md) · [ADRs](ADRs.md) · [API contracts](api-contracts/README.md) · [operating model](../delivery/SalonOS_Virtual_Product_Delivery_Team.md)
+
 TDD means Technical Design Document here. The design includes test strategy but is not an executed test report. Stack choices below are recommendations to validate during implementation, not an existing codebase.
 
 ## Architecture
